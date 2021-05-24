@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MapperSpeedTest.Common\MapperSpeedTest.Common.csproj" />
+    <ProjectReference Include="..\MapperSpeedTest.Entities\MapperSpeedTest.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MappingConfiguratorHelper.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MappingConfiguratorHelper.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="MappingConfiguratorHelper.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MappingConfiguratorHelper.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

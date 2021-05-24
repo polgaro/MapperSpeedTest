@@ -1,0 +1,764 @@
+{
+  "projectName": "allocation",
+  "version": "v1.0.10",
+  "api": {
+    "enabled": true,
+    "enablePrivateGatewaySecurity": true,
+    "definition": {
+      "bucket": "bwp-gms-dev-swagger-definition",
+      "file": "AllocationContract/swagger/swagger-1.0.6-snapshot.23651.json"
+    }
+  },
+  "database": {
+    "aurora": {
+      "enabled": true
+    },
+    "documentDB": {
+      "enabled": true
+    },
+    "redis": {
+      "enabled": true
+    }
+  },
+  "parameters": [
+    {
+      "name": "testBedName",
+      "description": "Which environment do you want to deploy to?",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "integrationBedName",
+      "description": "Which environment are you making external calls to?",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "applicationName",
+      "description": "The name of the application.",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "serviceName",
+      "description": "The name of the service.",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "measurementTopicArn",
+      "description": "The SNS Topic ARN where the measurements are published to.",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "allocationTopicArn",
+      "description": "The SNS Topic ARN where we publish to.",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "accountingTopicArn",
+      "description": "The accounting sns topic we will receive accounting period closed events from.",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "logLevel",
+      "type": "String",
+      "description": "The minimum log level for non-overridden namespaces.",
+      "setAsVariable": true
+    },
+    {
+      "name": "efLoggingEnabled",
+      "type": "String",
+      "description": "Whether or not to enable the EF Logger. Needed for slow/heavy notifications."
+    },
+    {
+      "name": "efLoggingSlowNotificatorClass",
+      "type": "String",
+      "description": "Class that will handle the logic for slow notifications. The default for mysql is Bwp.Lib.EFCore.Notificators.MySqlExplainSlowNotificator."
+    },
+    {
+      "name": "userPrincipalTableArn",
+      "type": "String",
+      "description": "The ARN of the userPrincipalTable DynamoDB database table"
+    },
+    {
+      "name": "userPrincipalTableName",
+      "type": "String",
+      "description": "DynamoDB table name for User Principals",
+      "setAsVariable": true
+    },
+    {
+      "name": "dbAppPassword",
+      "type": "String",
+      "description": "aurora user password",
+      "noEcho": true
+    },
+    {
+      "name": "communicationBaseUrl",
+      "type": "String",
+      "description": "Communication API Base URL. Used for sending notifications",
+      "setAsVariable": true
+    },
+    {
+      "name": "locationBaseUrl",
+      "type": "String",
+      "description": "Location API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "entityBaseUrl",
+      "type": "String",
+      "description": "Entity API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "billingBaseUrl",
+      "type": "String",
+      "description": "Billing API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "tspBaseUrl",
+      "type": "String",
+      "description": "Tsp API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "nominationBaseUrl",
+      "type": "String",
+      "description": "Nomination API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "rateScheduleBaseUrl",
+      "type": "String",
+      "description": "Rate Schedule API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "tspBaseUrl",
+      "type": "String",
+      "description": "Tsp API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "invoicingBaseUrl",
+      "type": "String",
+      "description": "Invoicing Engine API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "contractBaseUrl",
+      "type": "String",
+      "description": "Contract API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "userBaseUrl",
+      "type": "String",
+      "description": "User API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "imbalanceBaseUrl",
+      "type": "String",
+      "description": "Imbalance API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "repResponsibilityBaseUrl",
+      "type": "String",
+      "description": "Rep Responsibility API Base URL.",
+      "setAsVariable": true
+    },
+    {
+      "name": "ediOutboundBucket",
+      "description": "The name of the bucket to upload files from allocations.",
+      "type": "String",
+      "setAsVariable": true
+    },
+    {
+      "name": "cacheUseSsl",
+      "type": "String",
+      "description": "Sets only if the cache needs SSL or not.",
+      "setAsVariable": true
+    },
+    {
+      "name": "ediProcessMode",
+      "description": "The process mode for retrieving edi transaction sets, 'T' (Test) will be used for every environment thats not production, 'P' (Production), will be used for prod.",
+      "type": "String",
+      "setAsVariable": true
+    }
+  ],
+  "environmentVariables": [
+    {
+      "name": "EFLogging",
+      "value": "!Ref efLoggingEnabled"
+    },
+    {
+      "name": "EFLoggingSlowNotificatorClass",
+      "value": "!Ref efLoggingSlowNotificatorClass"
+    },
+    {
+      "name": "LAMBDA_NET_SERIALIZER_DEBUG",
+      "value": "!If [isOfficialEnvironment, false, true]"
+    },
+    {
+      "name": "externalLambdaEnvironment",
+      "value": "!Ref integrationBedName"
+    },
+    {
+      "name": "outputErrorInformation",
+      "value": "!If [ isUnofficialOrDevEnvironment, true, false]"
+    },
+    {
+      "name": "environmentNameForSNS",
+      "value": "!Ref testBedName"
+    },
+    {
+      "name": "getFuelRatesLambdaName",
+      "value": "bwp-invoiceengine-dev-us-GetFuelRatesHandlerLambd-1EE3I514PK1MD"
+    },
+    {
+      "name": "dbPassword",
+      "value": "!Ref dbAppPassword"
+    }
+  ],
+  "queues": [
+    {
+      "name": "Measurement",
+      "visibilityTimeout": 900,
+      "subscription": {
+        "snsTopic": "!Ref measurementTopicArn",
+        "isolateTestBed": false
+      }
+    },
+    {
+      "name": "PdaChanged",
+      "visibilityTimeout": 900,
+      "subscription": {
+        "snsTopic": "!Ref allocationTopicArn",
+        "isolateTestBed": false
+      }
+    },
+    {
+      "name": "AccountingPeriodClosing",
+      "visibilityTimeout": 900,
+      "subscription": {
+        "snsTopic": "!Ref allocationTopicArn",
+        "isolateTestBed": false
+      }
+    },
+    {
+      "name": "AccountingClosed",
+      "visibilityTimeout": 900,
+      "subscription": {
+        "snsTopic": "!Ref accountingTopicArn",
+        "isolateTestBed": false
+      }
+    },
+    {
+      "name": "ScheduledQuantityChanged",
+      "visibilityTimeout": 900
+    },
+    {
+      "name": "CalculateImbalance",
+      "visibilityTimeout": 900,
+      "subscription": {
+        "snsTopic": "!Ref allocationTopicArn",
+        "isolateTestBed": false
+      }
+    },
+    {
+      "name": "OppositeSide",
+      "visibilityTimeout": 900,
+      "subscription": {
+        "snsTopic": "!Ref allocationTopicArn",
+        "isolateTestBed": false
+      }
+    },
+    {
+      "name": "PpaCommunication",
+      "visibilityTimeout": 900,
+      "subscription": {
+        "snsTopic": "!Ref allocationTopicArn",
+        "isolateTestBed": false
+      }
+    }
+  ],
+  "lambdas": [
+    {
+      "name": "SendAllocationLog",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.TriggerSendAllocationLogHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/sendallocationlog",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "SendMissingPda",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.TriggerSendMissingPDAHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/sendmissingpda",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "SendIncompletePda",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.TriggerSendIncompletePDAHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/sendincompletepda",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetAllocationMethod",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetAllocationMethodsHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/flowing-gas-allocations/allocation-methods",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetPda",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetPdasHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/pdas",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "AddPda",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.PostPdaHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/pdas",
+          "method": "post"
+        }
+      }
+    },
+    {
+      "name": "GetPdaById",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetPdaByIdHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/pdas/{pdaId}",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetPdaDetails",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetPdaDetailsHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/pdas/details",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetIncompletePdas",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetIncompletePdasHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/pdas/incomplete",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetMissingPdas",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetMissingPdasHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/pdas/missing",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetImbalance",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetImbalanceSummaryHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/imbalances",
+          "method": "get"
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "EFLoggingMaximumRowsRead",
+          "value": "200000"
+        }
+      ]
+    },
+    {
+      "name": "GetImbalanceSummary",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetImbalanceSummaryCardHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/imbalances/summary",
+          "method": "get"
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "EFLoggingMaximumRowsRead",
+          "value": "200000"
+        }
+      ]
+    },
+    {
+      "name": "GetContractImbalance",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetImbalanceDetailsHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/imbalances/{contractId}",
+          "method": "get"
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "EFLoggingMaximumRowsRead",
+          "value": "200000"
+        }
+      ]
+    },
+    {
+      "name": "GetContractImbalanceExport",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.ExportImbalanceDetailsHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/imbalances/{contractId}/export",
+          "method": "get"
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "EFLoggingMaximumRowsRead",
+          "value": "200000"
+        }
+      ]
+    },
+    {
+      "name": "GetBalancingAgreementImbalance",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetObaImbalanceHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/imbalances/balancing-agreement",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetObaImbalanceDetails",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetObaImbalanceDetailsHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/imbalances/balancing-agreement/{contractId}",
+          "method": "get"
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "EFLoggingMaximumRowsRead",
+          "value": "200000"
+        }
+      ]
+    },
+    {
+      "name": "PutObaImbalanceSignoff",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.PutObaImbalanceSignoffHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/imbalances/balancing-agreement/{contractId}/signoff",
+          "method": "put"
+        }
+      }
+    },
+    {
+      "name": "GetAllocations",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetAllocationsHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/allocations",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "GetAllocationDetails",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetAllocationDetailsHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/allocations/{location_id}",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "PostCloseAllocations",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.PostCloseAccountingPeriodHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/allocations/close-period",
+          "method": "post"
+        }
+      }
+    },
+    {
+      "name": "GetLookup",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.GetLookupDataHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "api": {
+          "path": "/flowing-gas-allocations/lookup-data",
+          "method": "get"
+        }
+      }
+    },
+    {
+      "name": "SqsMeasurement",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsMeasurementHandler::HandleEvent",
+      "memory": 1024,
+      "timeout": 900,
+      "event": {
+        "sqs": {
+          "queue": "Measurement",
+          "batchSize": 10
+        }
+      },
+      "reservedConcurrency": 2,
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref MeasurementQueue"
+        }
+      ]
+    },
+    {
+      "name": "SqsCalculateImbalance",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsCalculateImbalanceHandler::HandleEvent",
+      "memory": 1024,
+      "event": {
+        "sqs": {
+          "queue": "CalculateImbalance",
+          "batchSize": 10
+        }
+      },
+      "reservedConcurrency": 2,
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref CalculateImbalanceQueue"
+        }
+      ]
+    },
+    {
+      "name": "SqsAccountingPeriodClosing",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsAccountingPeriodClosingHandler::HandleEvent",
+      "memory": 1024,
+      "event": {
+        "sqs": {
+          "queue": "AccountingPeriodClosing",
+          "batchSize": 10
+        }
+      },
+      "reservedConcurrency": 2,
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref AccountingPeriodClosingQueue"
+        }
+      ]
+    },
+    {
+      "name": "SqsAccountingClosed",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsAccountingClosedHandler::HandleEvent",
+      "memory": 1024,
+      "event": {
+        "sqs": {
+          "queue": "AccountingClosed",
+          "batchSize": 10
+        }
+      },
+      "reservedConcurrency": 2,
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref AccountingClosedQueue"
+        }
+      ]
+    },
+    {
+      "name": "SqsPdaChanged",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsPdaChangedHandler::HandleEvent",
+      "memory": 1024,
+      "event": {
+        "sqs": {
+          "queue": "PdaChanged",
+          "batchSize": 10
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref PdaChangedQueue"
+        }
+      ]
+    },
+    {
+      "name": "SqsScheduledQuantityChanged",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsScheduledQuantityChangedHandler::HandleEvent",
+      "memory": 1024,
+      "event": {
+        "sqs": {
+          "queue": "ScheduledQuantityChanged",
+          "batchSize": 10
+        }
+      },
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref ScheduledQuantityChangedQueue"
+        }
+      ]
+    },
+    {
+      "name": "SqsPpaCommunication",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsPpaCommunicationHandler::HandleEvent",
+      "memory": 1024,
+      "event": {
+        "sqs": {
+          "queue": "PpaCommunication",
+          "batchSize": 10
+        }
+      },
+      "reservedConcurrency": 2,
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref PpaCommunicationQueue"
+        }
+      ]
+    },
+    {
+      "name": "SqsOppositeSide",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.SqsOppositeSideHandler::HandleEvent",
+      "memory": 1024,
+      "event": {
+        "sqs": {
+          "queue": "OppositeSide",
+          "batchSize": 10
+        }
+      },
+      "reservedConcurrency": 2,
+      "environmentVariables": [
+        {
+          "name": "queueUrl",
+          "value": "!Ref OppositeSideQueue"
+        }
+      ]
+    },
+    {
+      "name": "TriggerAllocationEdi",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.TriggerAllocationEdiHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "scheduledJob": true
+      },
+      "environmentVariables": [
+        {
+          "name": "outboundBucket",
+          "value": "!Ref ediOutboundBucket"
+        }
+      ]
+    },
+    {
+      "name": "TriggerImbalanceEdi",
+      "vpc": true,
+      "handler": "Lambdas::Lambdas.Handlers.TriggerImbalanceEdiHandler::HandleRequest",
+      "memory": 1024,
+      "event": {
+        "scheduledJob": true
+      },
+      "environmentVariables": [
+        {
+          "name": "outboundBucket",
+          "value": "!Ref ediOutboundBucket"
+        },
+        {
+          "name": "EFLoggingMaximumRowsRead",
+          "value": "500000"
+        }
+      ]
+    }
+  ],
+  "security": {
+    "managedPolicies": [ "arn:aws:iam::aws:policy/AmazonS3FullAccess" ]
+  }
+}

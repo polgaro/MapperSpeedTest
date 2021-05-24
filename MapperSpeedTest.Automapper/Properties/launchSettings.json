@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MapperSpeedTest.Automapper": {
+      "commandName": "Project",
+      "commandLineArgs": "-e -c 10"
+    }
+  }
+}

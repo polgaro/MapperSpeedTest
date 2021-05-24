@@ -1,0 +1,44 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@output extension=".cs"#>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@include file="MultipleOutputHelper.ttinclude"#>
+<# var manager = Manager.Create(Host, GenerationEnvironment); #>
+<#
+	for (int i = 0; i < 100; i++)
+	{
+		manager.StartNewFile("Classes\\ExampleSourceClass" + i.ToString().PadLeft(2, '0') + ".cs"); 
+#>
+using System;
+
+public class ExampleSourceClass<#=i.ToString().PadLeft(2, '0') #>
+{
+	public string Property1 { get; set; }
+	public int Property2 { get; set; }
+	public DateTime Property3 { get; set; }
+}
+<# 
+	}
+	manager.EndBlock(); 
+#>
+
+<#
+	for (int i = 0; i < 100; i++)
+	{
+		manager.StartNewFile("Classes\\ExampleDTOClass" + i.ToString().PadLeft(2, '0') + ".cs"); 
+#>
+using System;
+
+public class ExampleDTOClass<#=i.ToString().PadLeft(2, '0') #>
+{
+	public string Property1 { get; set; }
+	public int Property2 { get; set; }
+	public DateTime Property3 { get; set; }
+}
+<# 
+	}
+	manager.EndBlock(); 
+#>
+<# manager.Process(true); #>

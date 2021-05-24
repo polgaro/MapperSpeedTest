@@ -1,0 +1,78 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@output extension=".cs"#>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@include file="MultipleOutputHelper.ttinclude"#>
+<#
+    var manager = Manager.Create(Host, GenerationEnvironment);
+#>
+<#
+	for (int i = 0; i < 100; i++)
+	{
+        string fileNumber = i.ToString().PadLeft(2, '0');
+		manager.StartNewFile("Mappers\\Class" + fileNumber + "Mapper.cs"); 
+#>
+using System;
+using MapperSpeedTest.ManualMapping;
+
+public class Class<#=fileNumber #>Mapper : IMapper<ExampleSourceClass<#=fileNumber #>, ExampleDTOClass<#=fileNumber #>>
+{
+	public ExampleDTOClass<#=fileNumber #> Convert(ExampleSourceClass<#=fileNumber #> source)
+    {
+        return new ExampleDTOClass<#=fileNumber #>
+        {
+            Property1 = source.Property1,
+            Property2 = source.Property2,
+            Property3 = source.Property3,
+        };
+    }
+}
+<#
+        manager.EndBlock();
+	}
+
+    manager.StartNewFile("Mappers\\ClassFactory.cs");
+#>
+using System;
+using MapperSpeedTest.ManualMapping;
+using System.Collections.Generic;
+
+namespace MapperSpeedTest.ManualMapping
+{
+    public static class ClassFactory
+    {
+        private static Dictionary<(Type, Type), object> _dictionary;
+
+        public static IMapper<T, T2> GetMapper<T, T2>()
+        {
+            if(_dictionary == null)
+            {
+                InitializeDictionary();
+            }
+
+            return _dictionary[(typeof(T), typeof(T2))] as IMapper<T, T2>;
+        }
+
+        private static void InitializeDictionary()
+        {
+            _dictionary = new Dictionary<(Type, Type), object>();
+<#
+for (int i = 0; i < 100; i++)
+{
+    string fileNumber = i.ToString().PadLeft(2, '0');
+#>
+            _dictionary.Add((typeof(ExampleSourceClass<#=fileNumber #>), typeof(ExampleDTOClass<#=fileNumber #>)), new Class<#=fileNumber #>Mapper());
+<#
+}
+#>
+        }
+    }
+}
+
+<#
+    manager.EndBlock();
+	 
+#>
+<# manager.Process(true); #>
