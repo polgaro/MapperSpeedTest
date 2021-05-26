@@ -11,8 +11,8 @@ You can click [here](https://github.com/polgaro/MapperSpeedTest/blob/master/meas
 Every single one of those numbers is an average of multiple measurements.
 
 ## What parameters can I use?
--c specifies the COUNT. I ran tests with 1, 1000 and 1000000
--e specifies that it will use explicit mappings (It only applies to Mapster that supports both implicit and explicit mappings)
+* -c specifies the COUNT. I ran tests with 1, 1000 and 1000000
+* -e specifies that it will use explicit mappings (It only applies to Mapster that supports both implicit and explicit mappings)
 
 ## Why is this important?
 Cold starts are a real concern when building Serverless Applications.
