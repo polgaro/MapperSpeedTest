@@ -27,8 +27,22 @@ Here are my settings (Note: It's EXTREMELY important you enable ReadyToRun compi
 
 ** Screenshot here
 
+NOTE: You have to do this step for EACH one of the projects you want to run (Mapster, Automapper, Manual).
+
 ### Step 2
 Go to the folder and start executing:
+
+```
+MapperSpeedTest.Mapster.exe -c 1
+MapperSpeedTest.Mapster.exe -c 1000
+MapperSpeedTest.Mapster.exe -c 1000000
+```
+
+** Screenshot here
+
+NOTE: You want to be in the PUBLISH folder (the example for me is `C:\Users\diego.garber\source\repos\MapperSpeedTest\MapperSpeedTest.Mapster\bin\Release\netcoreapp3.1\publish>`. If you run this from just the Release folder, you'd be running the compiled code WITHOUT ReadyToRun and would be considerably slower
+
+** Screenshot here
 
 ## How do I try it myself -- For linux (Via docker)
 
