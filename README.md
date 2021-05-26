@@ -6,9 +6,7 @@ This example was created with the following mappers:
 * Mapster
 * Manual mappings
 
-You can download this file that shows the results in my laptop.
-
-Link here to the file.
+You can click [here](https://github.com/polgaro/MapperSpeedTest/blob/master/measurements.xlsx) to download the results in my laptop.
 
 Every single one of those numbers is an average of multiple measurements.
 
