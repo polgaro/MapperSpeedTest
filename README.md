@@ -25,7 +25,7 @@ Set your publishing profile in Visual Studio by Right click ==> Publish
 
 Here are my settings (Note: It's EXTREMELY important you enable ReadyToRun compilation. If you have doubts, please [check my previous article](https://medium.com/slalom-build/solving-cold-starts-on-aws-lambda-when-using-dotnet-core-51f244f08f60)
 
-** Screenshot here
+![Image for post](https://github.com/polgaro/MapperSpeedTest/blob/master/Screenshots/VisualStudioPublishProfile.PNG)
 
 NOTE: You have to do this step for EACH one of the projects you want to run (Mapster, Automapper, Manual).
 
@@ -38,11 +38,11 @@ MapperSpeedTest.Mapster.exe -c 1000
 MapperSpeedTest.Mapster.exe -c 1000000
 ```
 
-** Screenshot here
+![Image for post](https://github.com/polgaro/MapperSpeedTest/blob/master/Screenshots/WindowsConsole.PNG)
 
 NOTE: You want to be in the PUBLISH folder (the example for me is `C:\Users\diego.garber\source\repos\MapperSpeedTest\MapperSpeedTest.Mapster\bin\Release\netcoreapp3.1\publish>`. If you run this from just the Release folder, you'd be running the compiled code WITHOUT ReadyToRun and would be considerably slower
 
-** Screenshot here
+![Image for post](https://github.com/polgaro/MapperSpeedTest/blob/master/Screenshots/WindowsConsoleWrongFolder.PNG)
 
 ## How do I try it myself -- For linux (Via docker)
 
